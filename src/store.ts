@@ -1,11 +1,11 @@
 import { createWithEqualityFn } from "zustand/traditional";
 import { immer } from "zustand/middleware/immer";
 import {
+  type ConversationTurn,
   getWords,
   sentencesToConversation,
   wordsToSentences,
-  type ConversationTurn,
-} from "./conversations";
+} from "@/text-fixtures";
 
 type ConversationState = {
   conversation: ConversationTurn[];

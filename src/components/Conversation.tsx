@@ -1,8 +1,8 @@
 import { Fragment, type FC } from "react";
 import { Virtualizer } from "virtua";
 import { MdxMessage } from "./MdxMessage";
-import { useConversationStore } from "@/lib/conversationStore";
 import { useShallow } from "zustand/shallow";
+import { useConversationStore } from "@/store";
 
 const UserMessageBubble: FC<{ message: string }> = ({ message }) => (
   <div className="ml-auto border border-border max-w-[80%] my-4 p-4 rounded-lg text-xs whitespace-pre-wrap bg-muted">

@@ -1,5 +1,5 @@
-import { getWords } from "@/lib/conversations";
-import { useConversationStore } from "@/lib/conversationStore";
+import { useConversationStore } from "@/store";
+import { getWords } from "@/text-fixtures";
 import { useCallback, useRef, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
