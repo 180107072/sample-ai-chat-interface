@@ -1,5 +1,6 @@
 import { evaluate } from "@mdx-js/mdx";
 import {
+  startTransition,
   useEffect,
   useState,
   type ComponentType,
@@ -14,6 +15,28 @@ type MdxMessageProps = {
 };
 
 type MdxContent = ComponentType<{ components?: Record<string, unknown> }>;
+
+const scheduleIdleCallback = (callback: IdleRequestCallback): number => {
+  if (typeof globalThis.requestIdleCallback === "function") {
+    return globalThis.requestIdleCallback(callback);
+  }
+
+  const start = Date.now();
+  return globalThis.setTimeout(() => {
+    callback({
+      didTimeout: false,
+      timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
+    } as IdleDeadline);
+  }, 1);
+};
+
+const cancelScheduledIdleCallback = (handle: number) => {
+  if (typeof globalThis.cancelIdleCallback === "function") {
+    globalThis.cancelIdleCallback(handle);
+  } else {
+    globalThis.clearTimeout(handle);
+  }
+};
 
 const mdxComponents = {
   pre: ({ children }: { children?: ReactNode }) => (
@@ -45,17 +68,19 @@ export const MdxMessage: FC<MdxMessageProps> = ({ source, className }) => {
     }
 
     let cancelled = false;
-    const handle = requestIdleCallback(() => {
+    const handle = scheduleIdleCallback(() => {
       evaluate(source, { ...runtime }).then((mod) => {
         if (!cancelled) {
-          setContent(() => mod.default as MdxContent);
+          startTransition(() => {
+            setContent(() => mod.default as MdxContent);
+          });
         }
       });
     });
 
     return () => {
       cancelled = true;
-      cancelIdleCallback(handle);
+      cancelScheduledIdleCallback(handle);
     };
   }, [source]);
 
