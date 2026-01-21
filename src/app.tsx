@@ -147,7 +147,7 @@ export const App = () => {
             onSubmit={handleSubmit}
           >
             <div className="text-[0.625rem] p-2">
-              <Kbd>cmd + x + c</Kbd> Code,{" "}
+              <Kbd>⌘ + ⌥ + c</Kbd> Code,{" "}
               <span className="text-[0.625rem]">**Bold**</span>
             </div>
             <ChatInput onEditorReady={handleEditorReady} />
