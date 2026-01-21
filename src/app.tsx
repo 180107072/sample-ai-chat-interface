@@ -15,13 +15,13 @@ import { ChatInput } from "./components/ChatInput";
 import { useStreamedResponse } from "./hooks/useStreamedResponse";
 import { useConversationStore } from "./store";
 import { Button } from "./components/ui/button";
+import { Kbd } from "./components/ui/kbd";
 
 const Conversation = lazy(() => import("./components/Conversation"));
 
 function useChatAutoscroll(
   scrollerRef: React.RefObject<HTMLDivElement | null>,
   contentRef: React.RefObject<HTMLDivElement | null>,
-  threshold = 24,
 ) {
   const [pinned, setPinned] = useState(true);
   useLayoutEffect(() => {
@@ -32,7 +32,7 @@ function useChatAutoscroll(
     const computePinned = () => {
       const dist =
         scroller.scrollHeight - (scroller.scrollTop + scroller.clientHeight);
-      setPinned(dist <= threshold);
+      setPinned(dist < 128);
     };
 
     const scrollToBottom = () => {
@@ -56,7 +56,7 @@ function useChatAutoscroll(
       ro.disconnect();
       scroller.removeEventListener("scroll", onScroll);
     };
-  }, [scrollerRef, contentRef, threshold, pinned]);
+  }, [scrollerRef, contentRef, pinned]);
   return [pinned, setPinned] as const;
 }
 
@@ -94,7 +94,7 @@ export const App = () => {
     editorRef.current = editor;
   }, []);
 
-  const [pinned, setPinned] = useChatAutoscroll(scrollerRef, contentRef, 64);
+  const [pinned, setPinned] = useChatAutoscroll(scrollerRef, contentRef, 0);
 
   const handleSubmit = useCallback(
     (event: FormEvent<HTMLFormElement>) => {
@@ -123,7 +123,7 @@ export const App = () => {
         >
           <div
             ref={contentRef}
-            className="flex max-w-2xl mx-auto flex-col gap-8 py-2"
+            className="flex max-w-2xl mx-auto flex-col gap-8 py-4"
           >
             <Suspense>
               <Conversation />
@@ -146,6 +146,10 @@ export const App = () => {
             className="overflow-hidden shadow max-w-2xl mx-auto z-40 border border-border shadow-background/50 bg-background rounded-md flex flex-col w-full focus-within:ring focus-within:ring-ring transition-shadow"
             onSubmit={handleSubmit}
           >
+            <div className="text-[0.625rem] p-2">
+              <Kbd>cmd + x + c</Kbd> Code,{" "}
+              <span className="text-[0.625rem]">**Bold**</span>
+            </div>
             <ChatInput onEditorReady={handleEditorReady} />
             <div className="h-10 z-10 px-2 items-center flex w-full bg-input border-t border-border">
               {isGenerating ? (
