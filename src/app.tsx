@@ -94,7 +94,7 @@ export const App = () => {
     editorRef.current = editor;
   }, []);
 
-  const [pinned, setPinned] = useChatAutoscroll(scrollerRef, contentRef, 0);
+  const [pinned, setPinned] = useChatAutoscroll(scrollerRef, contentRef);
 
   const handleSubmit = useCallback(
     (event: FormEvent<HTMLFormElement>) => {
